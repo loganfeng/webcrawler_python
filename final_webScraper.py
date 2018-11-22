@@ -1,5 +1,6 @@
 # coding: utf-8
 import io
+import csv
 from urllib.request import urlopen as uo
 from bs4 import BeautifulSoup as soup
 from tkinter import *
@@ -65,12 +66,9 @@ def getPlatform():
        #-----------------------------------plate
     for m in myContainers:
         p2 = m.div.p
-        # print('--------',p)
         pl = []
         for i in p2:
             if len(i) != 1:
-                # print("------",i)
-                # print("--------", len(i))
                 plate = str(i)[26:29]
                 pl.append(plate)
         # print('>>>>',pl)
@@ -91,12 +89,10 @@ def getRating():
         p3 = ''
         u = ''
 
-        # print(len(m),'---------\n', m)
+      
         if len(m) == 3:
 
             r = str(m).split(' ')
-            # print(r)
-            # print('))))',r)
             pr = r[6] + r[7] + r[8]
             p3 = pr[pr.index('%') - 2:pr.index('%') + 1]
             ratePercent_list.append(p3)
@@ -151,10 +147,17 @@ class urlEntry(Entry):
 
 
 if __name__ == '__main__':
+    productName_list =[]
+    DropDown_list =[]
+    oriPrice_list=[]
+    nowPrice_list =[]
+    plate_list=[]
+    ratePercent_list=[]
+    user_list=[]
+    containerAmount = 0
+    
     root = Tk()
     root.title(' My web scraper ')
-#print(len(productName_list),len(plate_list),len(DropDown_list),len(oriPrice_list),len(nowPrice_list ),len(ratePercent_list),len(user_list))
-#print(containerAmount)
 
     uE = urlEntry(root)
     uL = Label(root, text=' URL', width=10).grid(row=2,sticky = 'w')
