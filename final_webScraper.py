@@ -154,7 +154,7 @@ def disPlayData():
     
     # in case some chinese character can't not be read
     #.csv reading file and writing file can be the same name?
-    f = codecs.open("data2.csv", "r", "utf-8")
+    f = codecs.open("data.csv", "r", "utf-8")
     
     spamreader = csv.reader(f, delimiter='|', quotechar='|')
     for row in spamreader:
