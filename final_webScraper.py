@@ -20,23 +20,23 @@ def getURL(page):
         global myContainers
         myContainers = pageParse.find_all("div", {'class', 'responsive_search_name_combined'})
         containerAmount +=len(myContainers)
-        getPNamePricePreview()
+        getPNamePriceReview()
         getPlatform()
         getRating()
 
 
 
-def getPNamePricePreview():
+def getPNamePriceReview():
     #print(containerAmount)
     #---------------------------------brandName, price,
     for m in myContainers:
         s = m.text.split('\n')
         if len(s) < 19:
             DropDown_list.append(s[11])
-            p1 = s[14][0:-7].split('$')
+            p1 = s[len(s)-3][0:-7].split('$')
             if len(p1) < 3:
-                oriPrice_list.append(s[14][0:-7])
-                nowPrice_list.append(s[14][0:-7])
+                oriPrice_list.append(s[len(s)-3][0:-7])
+                nowPrice_list.append(s[len(s)-3][0:-7])
             else:
                 op = p1[1]
                 np = p1[2]
