@@ -117,6 +117,7 @@ def getRating():
 
 #print(len(overall_reviewlist),len(ratePercent_list), len(user_list))
 def writeData():
+    # by using 'utf-8', incase some chinese or Japanese character can not be encoded
     with io.open('data.csv', "w", encoding="utf-8") as file:
         header = "Product_Name, PlatForm, Price_Down, Original_Price,Price, RatePercent, User_Amount\n"
 
@@ -153,7 +154,7 @@ def disPlayData():
     lb.delete(0,END)
     
     # in case some chinese character can't not be read
-    #.csv reading file and writing file can be the same name?
+    #.csv reading file and writing file would be the same name
     f = codecs.open("data.csv", "r", "utf-8")
     
     spamreader = csv.reader(f, delimiter='|', quotechar='|')
@@ -171,7 +172,7 @@ if __name__ == '__main__':
     root.title(' My web scraper ')
     frame = Frame(root)
     v = IntVar()
-    pL = Label(root, text=' Range(<30)', width=10).grid(row=0, sticky='e')
+    pL = Label(root, text=' Range(<1176)', width=10).grid(row=0, sticky='e')# range depens on the web-side
     uL = Label(root, text=' URL', width=10).grid(row=0, sticky='w')
     uE = urlEntry(root)
     uPE = Entry(root, width=10, textvariable = v)
