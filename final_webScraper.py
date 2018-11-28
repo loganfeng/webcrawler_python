@@ -169,6 +169,7 @@ def disPlayData():
 #print(containerAmount)
 if __name__ == '__main__':
     root = Tk()
+    root.tk.call('encoding', 'system', 'utf-8') # in case some character encode correctly
     root.title(' My web scraper ')
     frame = Frame(root)
     v = IntVar()
