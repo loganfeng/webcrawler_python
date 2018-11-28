@@ -173,7 +173,7 @@ if __name__ == '__main__':
     root.title(' My web scraper ')
     frame = Frame(root)
     v = IntVar()
-    pL = Label(root, text=' Range(<1176)', width=10).grid(row=0, sticky='e')# range depens on the web-side
+    pL = Label(root, text=' Range(<30)', width=10).grid(row=0, sticky='e')# range depens on the web-side
     uL = Label(root, text=' URL', width=10).grid(row=0, sticky='w')
     uE = urlEntry(root)
     uPE = Entry(root, width=10, textvariable = v)
