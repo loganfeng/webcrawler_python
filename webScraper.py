@@ -118,15 +118,12 @@ class urlEntry(Entry):
         self.delete(0, END)
         self.insert(0, 'https://store.steampowered.com/search/?specials=1&page=')
 
-
 def getState():
     inPage = v.get()
     lb.insert(1, '----------------------------------------------')
     getURL(inPage)
     writeData()
     disPlayData()
-
-
 
 def disPlayData():
     lb.delete(0,END)
