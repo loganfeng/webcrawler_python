@@ -12,122 +12,100 @@ def getURL(page):
         my_url = 'https://store.steampowered.com/search/?specials=1&page=' + str(counter)
         print(counter)
         
+        # open up the connection, grab the web page and basically download
         uPage = uo(my_url)
-        my_html = uPage.read()
+        my_html = uPage.read() # dump everything out of the website
         uPage.close()
+        
+        # html parsing
         global pageParse
         pageParse = soup(my_html, 'html.parser')
+        
+        #grab each product
         global myContainers
-        myContainers = pageParse.find_all("div", {'class', 'responsive_search_name_combined'})
-        containerAmount +=len(myContainers)
+        myContainers = pageParse.find_all("div", {'class', 'responsive_search_name_combined'}) # grab one game total information
+        containerAmount +=len(myContainers) # tota amount of games in the current page
         getPNamePriceReview()
         getPlatform()
         getRating()
 
-
-
 def getPNamePriceReview():
-    #print(containerAmount)
-    #---------------------------------brandName, price,
     for m in myContainers:
         s = m.text.split('\n')
+        # deal with list length equals to 19 and not equals to 19 situation
         if len(s) < 19:
-            DropDown_list.append(s[11])
+            DropDown_list.append(s[11]) # add the discount information
             p1 = s[len(s)-3][0:-7].split('$')
-            if len(p1) < 3:
+            if len(p1) < 3: # case of free games
                 oriPrice_list.append(s[len(s)-3][0:-7])
                 nowPrice_list.append(s[len(s)-3][0:-7])
             else:
-                op = p1[1]
-                np = p1[2]
+                op = p1[1] # original price
+                np = p1[2] # sale price
                 oriPrice_list.append('$' + op)
                 nowPrice_list.append('$' + np)
         else:
+            DropDown_list.append(s[13]) # add the discount information
             p1 = s[16][0:-7].split('$')
-            if len(p1) < 3:
+            if len(p1) < 3: # case of free games
                 oriPrice_list.append(s[16][0:-7])
                 nowPrice_list.append(s[16][0:-7])
             else:
-                op = p1[1]
-                np = p1[2]
+                op = p1[1] # original price
+                np = p1[2] # sale price
                 oriPrice_list.append('$' + op)
                 nowPrice_list.append('$' + np)
-        # print(p)
-       #object = s[2] + ',' + s[6] + ',' + s[13] + ',' + s[16][0:-7]
-
-        #print(s[2])
-        productName_list.append(s[2])
-        DropDown_list.append(s[13])
+        productName_list.append(s[2]) # add name information
 
 def getPlatform():
-       #-----------------------------------plate
     for m in myContainers:
-        p2 = m.div.p
-        # print('--------',p)
+        p2 = m.div.p # grab the platform information
         pl = []
         for i in p2:
-            if len(i) != 1:
-                # print("------",i)
-                # print("--------", len(i))
-                plate = str(i)[26:29]
+            if len(i) != 1: # if length is 1, no platform info; otherwise have platform info
+                plate = str(i)[26:29] # win, mac or linux appears at index 26 to 29 in the string
                 pl.append(plate)
-        # print('>>>>',pl)
-        plate_list.append(pl)
-
-        #-------------------------rating
+        plateForm_list.append(pl)
 
 def getRating():
+    # grab ratings infomation
     rateContainer = pageParse.find_all('div', {'class', 'col search_reviewscore responsive_secondrow'})
-    #in order to check if I got all 25 item each page'
-
+    #in order to check if got all the 25 items on each page'
     if len(rateContainer) != len(myContainers):
         while len(rateContainer) != len(myContainers):
             rateContainer.append("---")
 
     for m in rateContainer:
-       # to store percent revire and user amount
+       # to store percent review and user amount
         p3 = ''
         u = ''
-
-      
-        if len(m) == 3:
-
+        if len(m) == 3: # if the length is 3, review information has found,otherwise no review info
             r = str(m).split(' ')
-            # print(r)
-            # print('))))',r)
-            pr = r[6] + r[7] + r[8]
-            p3 = pr[pr.index('%') - 2:pr.index('%') + 1]
+            pr = r[6] + r[7] + r[8] # find the review position
+            p3 = pr[pr.index('%') - 2:pr.index('%') + 1] # get the review percent
             ratePercent_list.append(p3)
-            user = r[9] + r[10] + r[11]
-
+            user = r[9] + r[10] + r[11] # find number of users position
             for us in user:
                 if us.isdigit():
-                    u = u + us
+                    u = u + us # get the nunber of users
             user_list.append(u)
-            # print(p, "-------", u)
         else:
             p3 = '0%'
             ratePercent_list.append(p3)
             u = '0'
             user_list.append(u)
 
-            # print(p,"-------",u )
-
-
-
-#print(len(overall_reviewlist),len(ratePercent_list), len(user_list))
 def writeData():
-    # by using 'utf-8', incase some chinese or Japanese character can not be encoded
-    with io.open('data.csv', "w", encoding="utf-8") as file:
+    # by using 'utf-8-sig', incase some chinese or Japanese character can not be encoded
+    with io.open('data.csv', "w", encoding="utf-8") as file: # use utf-8 for unicode in the data
         header = "Product_Name, PlatForm, Price_Down, Original_Price,Price, RatePercent, User_Amount\n"
 
         file.write(header)
 
         for j in range(0, containerAmount):
-            file.write(str(productName_list[j]) + ',' + str(plate_list[j]).replace(',', '/') + ',' + str(
-                DropDown_list[j]) + ',' + str(oriPrice_list[j]) + ',' + str(nowPrice_list[j]) + ',' + str(
+            file.write(str(productName_list[j]).replace(',', ' ') + ',' + str(plateForm_list[j]).replace(',', '/') + ',' + str(DropDown_list[j]) + ',' + str(oriPrice_list[j]) + ',' + str(nowPrice_list[j]) + ',' + str(
                 ratePercent_list[j]) + ',' + str(user_list[j]) + '\n')
-            print(productName_list[j], plate_list[j], DropDown_list[j], oriPrice_list[j], nowPrice_list[j],
+            print(productName_list[j], plateForm_list[j], DropDown_list[j], oriPrice_list[j], nowPrice_list[j],
                   ratePercent_list[j], user_list[j])
         
         file.close()
@@ -152,21 +130,15 @@ def getState():
 
 def disPlayData():
     lb.delete(0,END)
-    
     # in case some chinese character can't not be read
     #.csv reading file and writing file would be the same name
     f = codecs.open("data.csv", "r", "utf-8")
-    
     spamreader = csv.reader(f, delimiter='|', quotechar='|')
     for row in spamreader:
         lb.insert(END, ',  '.join(row))
-    
     print(len(productName_list), len(plateForm_list), len(DropDown_list), len(oriPrice_list), len(nowPrice_list),
           len(ratePercent_list), len(user_list))
 
-
-#print(len(productName_list),len(plate_list),len(DropDown_list),len(oriPrice_list),len(nowPrice_list ),len(ratePercent_list),len(user_list))
-#print(containerAmount)
 if __name__ == '__main__':
     root = Tk()
     root.tk.call('encoding', 'system', 'utf-8') # in case some character encode correctly
@@ -200,6 +172,5 @@ if __name__ == '__main__':
     user_list = []
     
     containerAmount = 0
-    
     
     root.mainloop()
