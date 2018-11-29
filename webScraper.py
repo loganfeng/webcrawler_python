@@ -1,4 +1,5 @@
 # coding: utf-8
+
 import io
 import csv
 import codecs
@@ -7,8 +8,9 @@ from bs4 import BeautifulSoup as soup
 from tkinter import *
 
 def getURL(page):
-    global containerAmount
-    for counter in range(page):
+     global  containerAmount
+     containerAmount = 0
+     for counter in range(page):
         my_url = 'https://store.steampowered.com/search/?specials=1&page=' + str(counter)
         print(counter)
         
@@ -69,6 +71,7 @@ def getPlatform():
 
 def getRating():
     # grab ratings infomation
+   
     rateContainer = pageParse.find_all('div', {'class', 'col search_reviewscore responsive_secondrow'})
     #in order to check if got all the 25 items on each page'
     if len(rateContainer) != len(myContainers):
@@ -97,7 +100,7 @@ def getRating():
 
 def writeData():
     # by using 'utf-8-sig', incase some chinese or Japanese character can not be encoded
-    with io.open('data.csv', "w", encoding="utf-8") as file: # use utf-8 for unicode in the data
+    with io.open('data1.csv', "w", encoding="utf-8") as file: # use utf-8 for unicode in the data
         header = "Product_Name, PlatForm, Price_Down, Original_Price,Price, RatePercent, User_Amount\n"
 
         file.write(header)
@@ -129,18 +132,19 @@ def disPlayData():
     lb.delete(0,END)
     # in case some chinese character can't not be read
     #.csv reading file and writing file would be the same name
-    f = codecs.open("data.csv", "r", "utf-8")
+    f = codecs.open("data1.csv", "r", "utf-8")
     spamreader = csv.reader(f, delimiter='|', quotechar='|')
     for row in spamreader:
         lb.insert(END, ',  '.join(row))
     print(len(productName_list), len(plateForm_list), len(DropDown_list), len(oriPrice_list), len(nowPrice_list),
           len(ratePercent_list), len(user_list))
-
-if __name__ == '__main__':
+    
+def Gui():
     root = Tk()
     root.tk.call('encoding', 'system', 'utf-8') # in case some character encode correctly
     root.title(' My web scraper ')
     frame = Frame(root)
+    global v
     v = IntVar()
     pL = Label(root, text=' Range(<30)', width=10).grid(row=0, sticky='e')# range depens on the web-side
     uL = Label(root, text=' URL', width=10).grid(row=0, sticky='w')
@@ -149,6 +153,7 @@ if __name__ == '__main__':
     uPE.grid(row=0,column = 1, sticky = 'w')
     
     uE.grid(row = 0, column = 0,sticky = 's')
+    global lb
     lb = Listbox(root, width = 120)
     lb.insert(1,'***************************Data show here****************')
     lb.grid(row = 2,column = 0, rowspan = 2, sticky = 'nswe')
@@ -160,14 +165,16 @@ if __name__ == '__main__':
     Button(root, text='Go', command=getState).grid(row = 1,column = 1)
     frame.grid(row = 1)
     
+    root.mainloop()
+
+if __name__ == '__main__':
     productName_list = []
-    DropDown_list = []
+    DropDown_list= []
     oriPrice_list = []
     nowPrice_list = []
-    plateForm_list = []
+    plateForm_list =[]
     ratePercent_list = []
-    user_list = []
-    
+    user_list =[]
     containerAmount = 0
     
-    root.mainloop()
+    Gui()
